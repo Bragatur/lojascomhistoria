@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lojas com História</title>
+  <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Segoe UI", sans-serif;
+      background: url('https://raw.githubusercontent.com/Bragatur/lojascomhistoria/refs/heads/main/A4_Brochure_Mockup_4.webp') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    main {
+      max-width: 500px;
+      width: 100%;
+      padding: 30px 20px;
+      border-radius: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 2em;
+      line-height: 1.2;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    p {
+      margin: 0 0 30px 0;
+      font-size: 1.1em;
+      line-height: 1.4;
+      max-width: 100%;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    }
+
+    .link-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      width: 100%;
+      max-width: 300px;
+      border: none;
+      border-radius: 30px;
+      background-color: #2575fc;
+      color: white;
+      font-size: 1em;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+      margin-bottom: 30px;
+      cursor: pointer;
+    }
+
+    .link-button:hover,
+    .link-button:focus {
+      background-color: #1a5bbf;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      outline: none;
+    }
+
+    .footer {
+      font-size: 0.9em;
+      color: #ccc;
+      user-select: none;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* --- INÍCIO: Estilos do Menu de Navegação (Flutuante Superior Direito) --- */
+
+    .floating-menu-dropdown {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: floatInTop 1s ease forwards;
+    }
+
+    @keyframes floatInTop {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .menu-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    #menu-toggler {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: #f7a01d; /* Laranja/Âmbar */
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    #menu-toggler:hover {
+      transform: scale(1.1);
+      background-color: #e6911c;
+    }
+
+    .menu-options {
+      display: none;
+      align-items: flex-end;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .menu-options.show {
+      display: flex;
+      animation: fadeSlideDown 0.4s ease forwards;
+    }
+
+    .menu-option-link {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Alinhar à direita (texto esq, ícone dir) */
+      gap: 8px; /* Espaçamento entre texto e ícone */
+      padding: 8px 12px;
+      width: fit-content;
+      border-radius: 12px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 0.8rem;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: optionPopDown 0.35s ease forwards;
+      transition: background-color 0.3s, transform 0.2s;
+      white-space: nowrap; /* Manter links numa só linha */
+    }
+
+    .menu-options.show .menu-option-link:nth-child(n) {
+      animation-delay: calc(0.05s * var(--i));
+    }
+
+    .menu-option-link:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes optionPopDown {
+      0% { opacity: 0; transform: translateY(-10px) scale(0.8); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* --- FIM: Estilos do Menu de Navegação --- */
+
+
+    /* --- INÍCIO: Estilos do Menu de Idiomas (Flutuante Inferior Direito) --- */
+
+    .lang-dropdown {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: floatInBottom 1s ease forwards;
+    }
+
+    @keyframes floatInBottom {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lang-label {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 12px;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+      user-select: none;
+      text-align: center;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+
+    .lang-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lang-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: #2575fc;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .lang-icon:hover {
+      transform: scale(1.1);
+      background-color: #1a5bbf;
+    }
+
+    .lang-options {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .lang-options.show {
+      display: flex;
+      animation: fadeSlideUp 0.4s ease forwards;
+    }
+
+    .lang-options .lang-icon {
+      width: 38px;
+      height: 38px;
+      font-size: 0.8rem;
+      background-color: #555;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: optionPopUp 0.35s ease forwards;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes optionPopUp {
+      0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .lang-options.show .lang-icon:nth-child(n) {
+      animation-delay: calc(0.05s * var(--i));
+    }
+
+    /* --- FIM: Estilos do Menu de Idiomas --- */
+
+  </style>
+</head>
+<body lang="pt">
+  <div class="overlay">
+    <main>
+      <h1 id="title">Lojas com História</h1>
+      <p id="description">Descarregue o Livro em português:</p>
+
+      <a id="download-button" class="link-button"
+         href="https://visitbraga.travel/wp-content/uploads/2025/11/Livro_Lojas_Com_Historia_Braga.pdf"
+         rel="noopener noreferrer" target="_blank">
+        <i class="lni lni-download"></i> Descarregar Livro
+      </a>
+
+      <div class="footer">© Município de Braga</div>
+    </main>
+  </div>
+
+  <div class="floating-menu-dropdown">
+    <div class="menu-main">
+      <div id="menu-toggler">
+          <i class="fa-solid fa-bars"></i>
+      </div>
+    </div>
+    <div class="menu-options" id="menu-options"></div>
+  </div>
+
+  <div class="lang-dropdown">
+    <div class="lang-main">
+      <div id="current-lang" class="lang-icon">PT</div>
+    </div>
+    <div class="lang-options" id="lang-options"></div>
+    <span class="lang-label" id="lang-label">Alterar idioma</span>
+  </div>
+
+  <script>
+    // Dados de Links do Roteiro por Idioma
+    const routeUrls = {
+        pt: "https://visitbraga.travel/wp-content/uploads/2025/11/Livro_Lojas_Com_Historia_Braga.pdf",
+        es: "https://visitbraga.travel/wp-content/uploads/2025/11/Libro-Tiendas-con-Historia-Braga.pdf",
+        fr: "https://visitbraga.travel/wp-content/uploads/2025/11/Livre-Magasins-avec-Histoire-Braga.pdf",
+        en: "https://visitbraga.travel/wp-content/uploads/2025/11/Stores-with-History-Book-Braga.pdf"
+    };
+
+    // Textos suportados (4 idiomas)
+    const texts = {
+      pt: {
+        title: "Lojas com História",
+        description: "Descarregue o Livro em Português:",
+        button: "Descarregar Livro",
+        langLabel: "Alterar idioma",
+        menu: {
+          menuLink1: "Mapa Turístico de Braga",
+          menuLink2: "Descobrir Braga em 3 Dias",
+          menuLink3: "Roteiro do Barroco",
+          menuLink4: "Braga After Dark",
+          menuLink5: "Roteiro Infantil"
+        }
+      },
+      en: {
+        title: "Stores with History",
+        description: "Download the Book in English:",
+        button: "Download Book",
+        langLabel: "Change language",
+        menu: {
+          menuLink1: "Tourist Map of Braga",
+          menuLink2: "Discover Braga in 3 Days",
+          menuLink3: "Baroque Route",
+          menuLink4: "Braga After Dark",
+          menuLink5: "Children's Route"
+        }
+      },
+      es: {
+        title: "Tiendas con Historia",
+        description: "Descarga el Libro en Español:",
+        button: "Descargar Libro",
+        langLabel: "Cambiar idioma",
+        menu: {
+          menuLink1: "Mapa Turístico de Braga",
+          menuLink2: "Descubrir Braga en 3 Días",
+          menuLink3: "Ruta del Barroco",
+          menuLink4: "Braga After Dark",
+          menuLink5: "Ruta Infantil"
+        }
+      },
+      fr: {
+        title: "Magasins avec Histoire",
+        description: "Téléchargez le Livre en Français :",
+        button: "Télécharger Livre",
+        langLabel: "Changer de langue",
+        menu: {
+          menuLink1: "Carte Touristique de Braga",
+          menuLink2: "Découvrir Braga en 3 Jours",
+          menuLink3: "Itinéraire Baroque",
+          menuLink4: "Braga After Dark",
+          menuLink5: "Itinéraire pour Enfants"
+        }
+      }
+    };
+
+    // Links de Navegação (Menu Flutuante)
+    const menuLinksData = [
+      { id: "menuLink1", url: "https://bragatur.github.io/mapas/" },
+      { id: "menuLink2", url: "https://bragatur.github.io/roteiros/" },
+      { id: "menuLink3", url: "https://bragatur.github.io/roteiro_barroco_braga/" },
+      { id: "menuLink4", url: "https://bragatur.github.io/bragaafterdark/" },
+      { id: "menuLink5", url: "https://bragatur.github.io/roteiro_intantil/" } // Alterado
+    ];
+
+    // Ícones do Menu
+    const menuIcons = {
+        "Mapa Turístico de Braga": "fa-solid fa-map", "Tourist Map of Braga": "fa-solid fa-map", "Mapa Turístico de Braga": "fa-solid fa-map", "Carte Touristique de Braga": "fa-solid fa-map",
+        "Descobrir Braga em 3 Dias": "fa-solid fa-route", "Discover Braga in 3 Days": "fa-solid fa-route", "Descubrir Braga en 3 Días": "fa-solid fa-route", "Découvrir Braga en 3 Jours": "fa-solid fa-route",
+        "Roteiro do Barroco": "fa-solid fa-landmark", "Baroque Route": "fa-solid fa-landmark", "Ruta del Barroco": "fa-solid fa-landmark", "Itinéraire Baroque": "fa-solid fa-landmark",
+        "Braga After Dark": "fa-solid fa-moon",
+        "Roteiro Infantil": "fa-solid fa-child-reaching", "Children's Route": "fa-solid fa-child-reaching", "Ruta Infantil": "fa-solid fa-child-reaching", "Itinéraire pour Enfants": "fa-solid fa-child-reaching"
+    };
+
+    const flagMap = { pt: 'PT', es: 'ES', en: 'EN', fr: 'FR' };
+    const currentLang = document.getElementById('current-lang');
+    const options = document.getElementById('lang-options');
+    const langLabel = document.getElementById('lang-label');
+    const downloadButton = document.getElementById("download-button");
+    const menuToggler = document.getElementById('menu-toggler');
+    const menuOptions = document.getElementById('menu-options');
+
+
+    // Função para renderizar as opções do menu de navegação
+    function renderMenu(lang) {
+        const t = texts[lang] || texts["en"];
+        menuOptions.innerHTML = '';
+        let i = 1;
+        // Combina o link principal com os outros links, mantendo a ordem inversa (de baixo para cima na visualização)
+        const linkDatas = [...menuLinksData].reverse();
+
+        linkDatas.forEach((linkData) => {
+            const a = document.createElement('a');
+            a.className = 'menu-option-link';
+            a.href = linkData.url;
+            // O linkName é obtido através do ID no objeto 'texts'
+            const linkName = t.menu[linkData.id];
+            const iconClass = menuIcons[linkName] || 'fa-solid fa-circle-info';
+            a.innerHTML = `${linkName} <i class="${iconClass}"></i>`;
+            a.target = "_self";
+            a.style.setProperty('--i', i++);
+            menuOptions.appendChild(a);
+        });
+    }
+
+    // Event listener para o menu de navegação
+    menuToggler.addEventListener('click', () => {
+        menuOptions.classList.toggle('show');
+        if (menuOptions.classList.contains('show')) {
+            menuToggler.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        } else {
+            menuToggler.innerHTML = '<i class="fa-solid fa-bars"></i>';
+        }
+    });
+
+    // Função para renderizar as opções do menu de idiomas
+    function renderDropdown(current) {
+      options.innerHTML = '';
+      let i = 1;
+      for (let lang in flagMap) {
+        if (lang !== current) {
+          const div = document.createElement('div');
+          div.className = 'lang-icon';
+          div.textContent = flagMap[lang];
+          div.style.setProperty('--i', i++);
+          div.onclick = () => setLanguage(lang);
+          options.appendChild(div);
+        }
+      }
+    }
+
+    // Event listener para o botão de idioma atual
+    currentLang.addEventListener('click', () => { options.classList.toggle('show'); });
+
+    // Função principal para alterar o idioma
+    function setLanguage(lang) {
+      // Usa o 'en' como fallback
+      const content = texts[lang] || texts['en'];
+      const routeUrl = routeUrls[lang] || routeUrls['en'];
+
+      document.getElementById("title").textContent = content.title;
+      document.getElementById("description").textContent = content.description;
+      document.documentElement.lang = lang;
+      document.title = content.title;
+
+      downloadButton.innerHTML = `<i class="lni lni-download"></i> ${content.button}`;
+      downloadButton.href = routeUrl;
+
+      langLabel.textContent = content.langLabel;
+      currentLang.textContent = flagMap[lang];
+      renderDropdown(lang);
+      options.classList.remove('show');
+
+      renderMenu(lang);
+    }
+
+    // Deteção do idioma do navegador ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      const supportedLangs = Object.keys(texts); // ['pt', 'en', 'es', 'fr']
+      let finalLang = 'pt'; // Padrão: Português (se não encontrar um dos 4)
+
+      // Obtém a lista de idiomas preferidos do navegador
+      const preferredLangs = navigator.languages || (navigator.language ? [navigator.language] : []);
+
+      // Percorre os idiomas preferidos e usa o primeiro que for suportado.
+      for (let i = 0; i < preferredLangs.length; i++) {
+          // Extrai o código base (ex: 'pt' de 'pt-PT')
+          const baseLangCode = preferredLangs[i].slice(0, 2).toLowerCase();
+
+          if (supportedLangs.includes(baseLangCode)) {
+              finalLang = baseLangCode; // Encontrou um idioma suportado
+              break; // Para de procurar
+          }
+      }
+
+      setLanguage(finalLang);
+    });
+  </script>
+</body>
+</html>
